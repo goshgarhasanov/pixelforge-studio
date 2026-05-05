@@ -41,21 +41,22 @@ class SettingsPanel(ctk.CTkFrame):
         self._on_start = on_start
 
         self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
 
         # Başlıq.
         title = ctk.CTkLabel(
             self,
-            text=t("nav.settings"),
+            text="⚙  " + t("nav.settings"),
             anchor="w",
             font=ctk.CTkFont(theme.FONT_FAMILY, theme.FS_TITLE, "bold"),
             text_color=theme.DARK_TEXT_PRIMARY,
         )
         title.grid(row=0, column=0, sticky="we", padx=theme.SPACE_LG, pady=(theme.SPACE_MD, theme.SPACE_SM))
 
-        body = ctk.CTkFrame(self, fg_color="transparent")
-        body.grid(row=1, column=0, sticky="nsew", padx=theme.SPACE_LG, pady=theme.SPACE_SM)
+        # Sürüşkən gövdə — kiçik ekranlarda da bütün tənzimləmələrə çatmaq mümkün olsun.
+        body = ctk.CTkScrollableFrame(self, fg_color="transparent", corner_radius=0)
+        body.grid(row=1, column=0, sticky="nsew", padx=theme.SPACE_SM, pady=theme.SPACE_SM)
         body.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=1)
 
         row = 0
 

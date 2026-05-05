@@ -10,6 +10,12 @@ from PIL import Image
 
 from pixelforge.core.compressor import compress_to_target
 from pixelforge.core.converter import encode_image, is_animated
+from pixelforge.core.exceptions import (
+    PixelForgeError,
+    SourceNotFoundError,
+    UnsupportedFormatError,
+    classify_exception,
+)
 from pixelforge.core.models import (
     CompressionOptions,
     ConvertOptions,
@@ -20,7 +26,7 @@ from pixelforge.core.models import (
     ResizeOptions,
 )
 from pixelforge.core.resizer import resize_image
-from pixelforge.utils.formats import extension_for, normalize_format
+from pixelforge.utils.formats import extension_for, is_supported_input, normalize_format
 from pixelforge.utils.paths import output_dir
 
 logger = logging.getLogger(__name__)
@@ -55,7 +61,12 @@ def process_job(job: Job) -> Job:
 
     try:
         if not job.source.exists():
-            raise FileNotFoundError(f"Mənbə fayl tapılmadı: {job.source}")
+            raise SourceNotFoundError(f"Mənbə fayl tapılmadı: {job.source}")
+
+        if not is_supported_input(job.source):
+            raise UnsupportedFormatError(
+                f"Format dəstəklənmir: {job.source.suffix or '<uzantısız>'}"
+            )
 
         job.original_size = job.source.stat().st_size
 
@@ -115,10 +126,25 @@ def process_job(job: Job) -> Job:
             job.final_size,
         )
 
-    except Exception as exc:  # noqa: BLE001 — UI-yə xəta mesajı ötürmək lazımdır.
+    except PixelForgeError as exc:
+        # Tətbiqə xas xəta — istifadəçi mesajı ilə.
+        import traceback as _tb
+
         job.status = JobStatus.FAILED
-        job.error = str(exc)
-        logger.exception("Emal zamanı xəta: %s — %s", job.source.name, exc)
+        job.error = exc.user_message
+        job.error_suggestion = exc.suggestion
+        job.error_traceback = _tb.format_exc()
+        logger.error("✗ %s — %s", job.source.name, exc.user_message)
+    except Exception as exc:  # noqa: BLE001 — UI-yə xəta mesajı ötürmək lazımdır.
+        # Naməlum xətanı uyğun tipə çeviririk.
+        import traceback as _tb
+
+        classified = classify_exception(exc)
+        job.status = JobStatus.FAILED
+        job.error = classified.user_message
+        job.error_suggestion = classified.suggestion
+        job.error_traceback = _tb.format_exc()
+        logger.exception("✗ %s — %s", job.source.name, classified.user_message)
 
     finally:
         job.duration_ms = int((time.perf_counter() - started_at) * 1000)

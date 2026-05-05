@@ -79,10 +79,12 @@ class Job:
     options: JobOptions
     status: JobStatus = JobStatus.QUEUED
     output_path: Path | None = None
-    original_size: int = 0          # Bayt
-    final_size: int = 0             # Bayt
+    original_size: int = 0           # Bayt
+    final_size: int = 0              # Bayt
     duration_ms: int = 0
-    error: str | None = None
+    error: str | None = None         # İstifadəçi mesajı
+    error_suggestion: str | None = None
+    error_traceback: str | None = None
 
     @property
     def saved_bytes(self) -> int:

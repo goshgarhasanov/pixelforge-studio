@@ -38,6 +38,7 @@ class _JobRow(ctk.CTkFrame):
         master: ctk.CTkBaseClass,
         job: Job,
         on_remove: Callable[[Job], None],
+        on_show_error: Callable[[Job], None] | None = None,
     ) -> None:
         super().__init__(
             master,
@@ -47,6 +48,7 @@ class _JobRow(ctk.CTkFrame):
         )
         self.job = job
         self._on_remove = on_remove
+        self._on_show_error = on_show_error
 
         self.grid_columnconfigure(0, weight=1)
 
@@ -114,14 +116,24 @@ class _JobRow(ctk.CTkFrame):
                 text_color=theme.STATUS_DONE,
             )
         elif self.job.status == JobStatus.FAILED:
-            self._target.configure(text="—", text_color=theme.STATUS_FAILED)
+            self._target.configure(text="✕  ətraflı", text_color=theme.STATUS_FAILED)
+            # Xəta sırasını klikdə dialoq açmaq üçün interaktivləşdiririk.
+            if self._on_show_error is not None:
+                for w in (self, self._name, self._size, self._target, self._status):
+                    w.configure(cursor="hand2")
+                    w.bind("<Button-1>", lambda _e: self._on_show_error(self.job) if self._on_show_error else None)
 
 
 class FileQueue(ctk.CTkFrame):
     """İşlərin sıralandığı sürüşkən növbə paneli."""
 
-    def __init__(self, master: ctk.CTkBaseClass) -> None:
+    def __init__(
+        self,
+        master: ctk.CTkBaseClass,
+        on_show_error: Callable[[Job], None] | None = None,
+    ) -> None:
         super().__init__(master, fg_color=theme.DARK_BG_ELEVATED, corner_radius=theme.RADIUS_LG)
+        self._on_show_error = on_show_error
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
@@ -161,7 +173,12 @@ class FileQueue(ctk.CTkFrame):
         if jobs and self._empty.winfo_ismapped():
             self._empty.grid_forget()
         for job in jobs:
-            row = _JobRow(self._scroll, job, on_remove=self._remove_job)
+            row = _JobRow(
+                self._scroll,
+                job,
+                on_remove=self._remove_job,
+                on_show_error=self._on_show_error,
+            )
             row.grid(
                 row=len(self._rows),
                 column=0,
