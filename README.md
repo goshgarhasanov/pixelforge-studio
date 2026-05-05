@@ -11,9 +11,40 @@ _"Hər pikseli ustalıqla emal et."_
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-A8A8C0)](LICENSE)
 [![Built with CustomTkinter](https://img.shields.io/badge/UI-CustomTkinter-6366F1)](https://github.com/TomSchimansky/CustomTkinter)
-[![Tests](https://img.shields.io/badge/tests-23%20passing-84CC16)](#test-etmək)
+[![Tests](https://img.shields.io/badge/tests-55%20passing-84CC16)](#test-etmək)
+
+<br/>
+
+<img src="assets/screenshots/01-empty.png" width="900" alt="PixelForge Studio — əsas pəncərə" />
 
 </div>
+
+---
+
+## 📸 Ekran görüntüləri
+
+<table>
+<tr>
+<td width="50%">
+<b>Növbə doludur</b><br/>
+<img src="assets/screenshots/02-queue-loaded.png" alt="Növbəyə şəkillər əlavə edildi" />
+</td>
+<td width="50%">
+<b>Canlı log paneli</b><br/>
+<img src="assets/screenshots/03-logs-active.png" alt="Müasir konsol-stil log paneli" />
+</td>
+</tr>
+<tr>
+<td width="50%">
+<b>Emal nəticələri</b><br/>
+<img src="assets/screenshots/04-results.png" alt="Tamamlanmış işlər və qənaət" />
+</td>
+<td width="50%">
+<b>Geniş xəta dialoqu</b><br/>
+<img src="assets/screenshots/05-error-dialog.png" alt="Detallı xəta hesabatı" />
+</td>
+</tr>
+</table>
 
 ---
 
