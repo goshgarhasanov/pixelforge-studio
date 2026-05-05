@@ -44,6 +44,16 @@ class StatusBar(ctk.CTkFrame):
         )
         self._saved.grid(row=0, column=2, padx=theme.SPACE_LG, sticky="e")
 
+        # Müəllif kredisi — sağ tərəfdə həmişə görünür.
+        self._credit = ctk.CTkLabel(
+            self,
+            text="Developed by Goshgar Hasanzadeh",
+            font=ctk.CTkFont(theme.FONT_FAMILY, theme.FS_SMALL),
+            text_color=theme.GRADIENT_FUCHSIA,
+            anchor="e",
+        )
+        self._credit.grid(row=0, column=3, padx=(theme.SPACE_SM, theme.SPACE_LG), sticky="e")
+
     def set_status(self, key: str, color: str | None = None) -> None:
         """Status mesajını dəyişir (məs. 'status.running')."""
         self._status.configure(text="● " + t(key))
